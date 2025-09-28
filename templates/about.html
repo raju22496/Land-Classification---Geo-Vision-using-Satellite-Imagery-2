@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Land Classification - About{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="mb-4">About Land Classification System</h2>
+                
+                <div class="row mb-5">
+                    <div class="col-md-8">
+                        <h4>What is Land Classification?</h4>
+                        <p>Land classification is the process of categorizing land cover based on its physical characteristics. This includes identifying different types of vegetation, urban areas, water bodies, and other natural or man-made features on the Earth's surface.</p>
+                        
+                        <p>Our Land Classification System uses advanced deep learning technology to automatically analyze and classify satellite and aerial imagery into different land cover categories. This provides valuable insights for urban planning, environmental monitoring, agriculture management, and more.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <img src="{{ url_for('static', filename='img/about-1.jpg') }}" alt="Land classification example" class="img-fluid rounded shadow">
+                    </div>
+                </div>
+                
+                <div class="mb-5">
+                    <h4>Our Technology</h4>
+                    <p>This system is powered by a state-of-the-art deep learning model based on the UNet++ architecture with a pretrained RegNetY-120 encoder. The model was trained on a diverse dataset of land cover imagery to ensure accurate classification across various landscapes and environmental conditions.</p>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-brain text-primary me-2"></i>Deep Learning Model</h5>
+                                    <p class="mb-0">UNet++ architecture with RegNetY-120 encoder, trained on diverse land cover datasets to ensure robust classification performance.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5><i class="fas fa-cogs text-primary me-2"></i>Powerful Backend</h5>
+                                    <p class="mb-0">Built with PyTorch and Flask to provide a fast, reliable, and user-friendly experience for land cover analysis.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-5">
+                    <h4>Applications</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-city fa-3x text-success mb-3"></i>
+                                    <h5>Urban Planning</h5>
+                                    <p>Monitor urban growth, assess land use changes, and plan sustainable development.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-leaf fa-3x text-success mb-3"></i>
+                                    <h5>Environmental Monitoring</h5>
+                                    <p>Track deforestation, habitat changes, and conservation efforts over time.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-seedling fa-3x text-success mb-3"></i>
+                                    <h5>Agriculture</h5>
+                                    <p>Analyze crop health, field conditions, and optimize agricultural practices.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-5">
+                    <h4>Our Team</h4>
+                    <p>The Land Classification System was developed by a team of experts in machine learning, remote sensing, and geospatial analysis. Our goal is to make advanced land cover analysis accessible to researchers, planners, and organizations around the world.</p>
+                </div>
+                
+                <div class="text-center mt-5">
+                    <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg">Try it now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

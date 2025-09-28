@@ -1,0 +1,192 @@
+/* Main Stylesheet for Land Classification System */
+
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f8fa;
+    color: #333;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: 600;
+}
+
+.container {
+    max-width: 1200px;
+}
+
+/* Navbar Styling */
+.navbar-brand img {
+    margin-right: 10px;
+}
+
+.navbar {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.card-header {
+    font-weight: 600;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styling */
+.btn {
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: #2563eb;
+    border-color: #2563eb;
+}
+
+.btn-primary:hover {
+    background-color: #1e40af;
+    border-color: #1e40af;
+}
+
+.btn-success {
+    background-color: #10b981;
+    border-color: #10b981;
+}
+
+.btn-success:hover {
+    background-color: #059669;
+    border-color: #059669;
+}
+
+.btn-outline-primary {
+    color: #2563eb;
+    border-color: #2563eb;
+}
+
+.btn-outline-primary:hover {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+/* Home Page Styling */
+.home-image img {
+    transition: transform 0.3s;
+}
+
+.home-image img:hover {
+    transform: scale(1.02);
+}
+
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.step-icon {
+    background-color: #f0f9ff;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* Upload Zone Styling */
+.upload-zone {
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+}
+
+.upload-zone:hover {
+    border-color: #2563eb;
+    background-color: #f0f9ff;
+}
+
+.upload-zone.highlight {
+    border-color: #2563eb;
+    background-color: #f0f9ff;
+}
+
+/* Result Page Styling */
+.classification-image {
+    max-height: 300px;
+    width: auto;
+    transition: transform 0.3s;
+    cursor: pointer;
+}
+
+.classification-image:hover {
+    transform: scale(1.05);
+}
+
+/* Documentation Page Styling */
+.nav-pills .nav-link {
+    color: #333;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #2563eb;
+    color: #fff;
+}
+
+.tab-content {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Footer Styling */
+footer {
+    margin-top: 50px;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .step-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .classification-image {
+        max-height: 200px;
+    }
+}

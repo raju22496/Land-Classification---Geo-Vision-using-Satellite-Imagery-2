@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Land Classification - Results{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h2 class="card-title h4 mb-0">Land Classification Results</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-header">Original Image</div>
+                            <div class="card-body p-2 text-center">
+                                <img src="{{ url_for('static', filename=original_image) }}" class="img-fluid rounded classification-image" alt="Original Image">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-header">Classification Map</div>
+                            <div class="card-body p-2 text-center">
+                                <img src="{{ url_for('static', filename=mask_image) }}" class="img-fluid rounded classification-image" alt="Classification Map">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-header">Overlay View</div>
+                            <div class="card-body p-2 text-center">
+                                <img src="{{ url_for('static', filename=overlay_image) }}" class="img-fluid rounded classification-image" alt="Overlay View">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">Land Cover Statistics</div>
+                            <div class="card-body">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Class</th>
+                                            <th>Pixels</th>
+                                            <th>Percentage</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for class_name, stats in class_stats.items() %}
+                                        <tr>
+                                            <td>{{ class_name }}</td>
+                                            <td>{{ stats.pixels }}</td>
+                                            <td>{{ stats.percentage }}%</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-header">Land Cover Distribution</div>
+                            <div class="card-body">
+                                <canvas id="landCoverChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('predict') }}" class="btn btn-primary me-2">
+                        <i class="fas fa-upload me-2"></i>Analyze Another Image
+                    </a>
+                    <a href="{{ url_for('documentation') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-info-circle me-2"></i>Learn About Classes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    .classification-image {
+        max-height: 300px;
+        width: auto;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Prepare data for chart
+        const classNames = [];
+        const percentages = [];
+        const backgroundColors = [];
+        
+        {% for class_name, stats in class_stats.items() %}
+            {% if stats.percentage > 0 %}
+                classNames.push('{{ class_name }}');
+                percentages.push({{ stats.percentage }});
+                backgroundColors.push(getRandomColor());
+            {% endif %}
+        {% endfor %}
+        
+        // Create pie chart
+        const ctx = document.getElementById('landCoverChart');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: classNames,
+                datasets: [{
+                    data: percentages,
+                    backgroundColor: backgroundColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.raw}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Generate random colors for chart
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+    });
+</script>
+{% endblock %}

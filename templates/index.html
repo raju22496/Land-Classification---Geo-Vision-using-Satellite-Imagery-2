@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}Land Classification System - Home{% endblock %}
+
+{% block content %}
+<div class="row align-items-center">
+    <div class="col-md-6">
+        <h1 class="display-4 mb-4">Land Classification System</h1>
+        <p class="lead">An advanced AI-powered solution for analyzing and classifying land cover from satellite and aerial imagery.</p>
+        
+        <div class="features mt-4">
+            <div class="d-flex align-items-center mb-3">
+                <div class="feature-icon bg-primary text-white rounded-circle p-3 me-3">
+                    <i class="fas fa-map"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">Accurate Classification</h5>
+                    <p class="text-muted mb-0">Powered by deep learning for precise land cover identification</p>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center mb-3">
+                <div class="feature-icon bg-success text-white rounded-circle p-3 me-3">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">Detailed Analysis</h5>
+                    <p class="text-muted mb-0">Get comprehensive statistics and visualizations</p>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center mb-3">
+                <div class="feature-icon bg-info text-white rounded-circle p-3 me-3">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">Fast Processing</h5>
+                    <p class="text-muted mb-0">Efficient algorithms for quick results</p>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center">
+                <div class="feature-icon bg-danger text-white rounded-circle p-3 me-3">
+                    <i class="fas fa-location-dot"></i>
+                </div>
+                <div>
+                    <h5 class="mb-1">Nearby Points of Interest</h5>
+                    <p class="text-muted mb-0">Find schools, hospitals, and amenities near any location</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4">
+            <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg me-2">Try it now</a>
+            <a href="{{ url_for('documentation') }}" class="btn btn-outline-secondary btn-lg">Learn more</a>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="home-image p-4">
+            <img src="{{ url_for('static', filename='img/hero.jpg') }}" alt="Land classification example" class="img-fluid rounded shadow-lg">
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">Our Services</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="service-icon mb-3">
+                    <i class="fas fa-image display-5 text-primary"></i>
+                </div>
+                <h4>Land Classification</h4>
+                <p>Upload an image for accurate land cover segmentation.</p>
+                <a href="{{ url_for('predict') }}" class="btn btn-sm btn-primary mt-2">Classify Image</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="service-icon mb-3">
+                    <i class="fas fa-layer-group display-5 text-success"></i>
+                </div>
+                <h4>Batch Processing</h4>
+                <p>Process multiple images and get aggregated results.</p>
+                <a href="{{ url_for('batch_predict') }}" class="btn btn-sm btn-success mt-2">Batch Process</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="service-icon mb-3">
+                    <i class="fas fa-map-marker-alt display-5 text-danger"></i>
+                </div>
+                <h4>Nearby POIs</h4>
+                <p>Find important points of interest near any location.</p>
+                <a href="{{ url_for('nearby') }}" class="btn btn-sm btn-danger mt-2">Find Nearby</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="service-icon mb-3">
+                    <i class="fas fa-code display-5 text-info"></i>
+                </div>
+                <h4>API Access</h4>
+                <p>Integrate our services into your own applications.</p>
+                <a href="{{ url_for('documentation') }}" class="btn btn-sm btn-info mt-2">API Docs</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">How It Works</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="step-icon mb-3">
+                    <span class="display-5 text-primary">1</span>
+                </div>
+                <h4>Upload Image</h4>
+                <p>Upload your satellite or aerial image for analysis.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="step-icon mb-3">
+                    <span class="display-5 text-primary">2</span>
+                </div>
+                <h4>AI Analysis</h4>
+                <p>Our deep learning model processes and classifies the land cover in your image.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="step-icon mb-3">
+                    <span class="display-5 text-primary">3</span>
+                </div>
+                <h4>Get Results</h4>
+                <p>View detailed classification maps and statistics about the land cover.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3>Ready to analyze your land cover data?</h3>
+                        <p class="lead mb-0">Get started with our easy-to-use land classification tool today.</p>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <a href="{{ url_for('predict') }}" class="btn btn-primary me-2">Start Classifying</a>
+                        <a href="{{ url_for('nearby') }}" class="btn btn-outline-danger">Find Nearby POIs</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends "layout.html" %}
+
+{% block title %}Dashboard - Land Cover Classification{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Analyses History</h5>
+            </div>
+            <div class="card-body">
+                {% if history %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Result</th>
+                                <th>Date & Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in history %}
+                            <tr>
+                                <td>
+                                    <img src="{{ url_for('static', filename='uploads/' + item.original) }}" alt="Original" 
+                                         class="img-thumbnail" style="max-width: 100px; max-height: 60px;">
+                                </td>
+                                <td>
+                                    <img src="{{ url_for('static', filename='results/' + item.result) }}" alt="Result" 
+                                         class="img-thumbnail" style="max-width: 100px; max-height: 60px;">
+                                </td>
+                                <td>{{ item.timestamp }}</td>
+                                <td>
+                                    <a href="{{ url_for('results', image_id=item.original) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>No analysis history available. Upload an image to get started.
+                </div>
+                <div class="text-center">
+                    <a href="{{ url_for('upload') }}" class="btn btn-primary">
+                        <i class="fas fa-upload me-2"></i>Upload an Image
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Quick Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>Total Analyses</div>
+                    <div class="badge bg-primary rounded-pill">{{ history|length }}</div>
+                </div>
+                <div class="progress mb-3">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%" 
+                         aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('upload') }}" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>New Analysis
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Tips & Information</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="fas fa-image text-primary me-3"></i>
+                        <div>
+                            <strong>Image Quality</strong>
+                            <div class="small text-muted">Higher resolution images provide better results</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="fas fa-cloud-sun text-primary me-3"></i>
+                        <div>
+                            <strong>Clear Imagery</strong>
+                            <div class="small text-muted">Minimal cloud cover improves accuracy</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        <i class="fas fa-database text-primary me-3"></i>
+                        <div>
+                            <strong>Session Storage</strong>
+                            <div class="small text-muted">History is stored in your session only</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

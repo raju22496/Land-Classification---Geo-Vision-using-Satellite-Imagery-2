@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}Land Classification - Predict{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title h4 mb-0">Land Cover Classification</h2>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <p class="lead">Upload a satellite or aerial image to analyze land cover</p>
+                </div>
+                
+                <form action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data" id="upload-form">
+                    <div class="mb-4">
+                        <div class="custom-file-container">
+                            <div class="upload-zone" id="upload-zone">
+                                <input type="file" name="file" id="file-input" class="d-none" accept="image/*" required>
+                                <div class="text-center py-5" id="drop-zone-content">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                    <h5>Drag & Drop your image here</h5>
+                                    <p class="text-muted">or</p>
+                                    <button type="button" class="btn btn-outline-primary" id="browse-btn">Browse Files</button>
+                                    <p class="small text-muted mt-2">Supported formats: JPG, PNG, TIFF</p>
+                                </div>
+                                <div class="selected-file d-none" id="selected-file">
+                                    <div class="card">
+                                        <div class="card-body d-flex align-items-center">
+                                            <i class="fas fa-file-image fa-2x text-primary me-3"></i>
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0" id="file-name">filename.jpg</h6>
+                                                <small class="text-muted" id="file-size">Size: 1.2 MB</small>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" id="remove-file">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-5" id="analyze-btn" disabled>
+                            <i class="fas fa-microscope me-2"></i>Analyze Image
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-4">
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle me-2"></i>Tips for best results:</h5>
+                        <ul class="mb-0">
+                            <li>Use high-resolution images for more accurate classification</li>
+                            <li>RGB images work best with this model</li>
+                            <li>Images should ideally be taken from above (aerial or satellite perspective)</li>
+                            <li>For batch processing of multiple images, use our <a href="{{ url_for('batch_predict') }}">Batch Processing</a> tool</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    .upload-zone {
+        border: 2px dashed #ccc;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        transition: all 0.3s;
+    }
+    
+    .upload-zone.highlight {
+        border-color: #0d6efd;
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+    
+    .custom-file-container {
+        position: relative;
+    }
+    
+    #upload-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0%;
+        height: 5px;
+        background-color: #0d6efd;
+        transition: width 0.3s;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropZone = document.getElementById('upload-zone');
+        const fileInput = document.getElementById('file-input');
+        const browseBtn = document.getElementById('browse-btn');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const selectedFile = document.getElementById('selected-file');
+        const dropZoneContent = document.getElementById('drop-zone-content');
+        const removeFileBtn = document.getElementById('remove-file');
+        const fileName = document.getElementById('file-name');
+        const fileSize = document.getElementById('file-size');
+        
+        // Handle file selection via browse button
+        browseBtn.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        // Handle drag and drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropZone.classList.add('highlight');
+        }
+        
+        function unhighlight() {
+            dropZone.classList.remove('highlight');
+        }
+        
+        // Handle file drop
+        dropZone.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateFileInfo(files[0]);
+            }
+        }
+        
+        // Handle file selection via input
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                updateFileInfo(this.files[0]);
+            }
+        });
+        
+        // Update file info display
+        function updateFileInfo(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = `Size: ${formatFileSize(file.size)}`;
+            
+            dropZoneContent.classList.add('d-none');
+            selectedFile.classList.remove('d-none');
+            analyzeBtn.disabled = false;
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Remove selected file
+        removeFileBtn.addEventListener('click', function() {
+            fileInput.value = '';
+            selectedFile.classList.add('d-none');
+            dropZoneContent.classList.remove('d-none');
+            analyzeBtn.disabled = true;
+        });
+    });
+</script>
+{% endblock %}

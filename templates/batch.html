@@ -1,0 +1,393 @@
+{% extends 'base.html' %}
+
+{% block title %}Land Classification - Batch Processing{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title h4 mb-0">Batch Land Cover Classification</h2>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <p class="lead">Upload multiple images for batch processing</p>
+                </div>
+                
+                <div id="batch-upload-section">
+                    <div class="custom-file-container">
+                        <div class="upload-zone" id="batch-upload-zone">
+                            <input type="file" name="files[]" id="batch-file-input" class="d-none" accept="image/*" multiple required>
+                            <div class="text-center py-5" id="batch-drop-zone-content">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                <h5>Drag & Drop multiple images here</h5>
+                                <p class="text-muted">or</p>
+                                <button type="button" class="btn btn-outline-primary" id="batch-browse-btn">Browse Files</button>
+                                <p class="small text-muted mt-2">Maximum 10 images per batch</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="selected-files-container" class="mt-3 d-none">
+                        <h5>Selected Files (<span id="file-count">0</span>)</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Filename</th>
+                                        <th>Size</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="selected-files-list">
+                                    <!-- Files will be listed here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="button" class="btn btn-outline-danger" id="clear-files-btn">
+                                <i class="fas fa-trash me-2"></i>Clear All
+                            </button>
+                            <button type="button" class="btn btn-primary" id="process-batch-btn">
+                                <i class="fas fa-play me-2"></i>Start Processing
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="batch-progress-section" class="d-none">
+                    <h4 class="mb-3">Batch Processing</h4>
+                    <div class="progress mb-3">
+                        <div id="batch-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <p id="batch-progress-text">Processing image 0 of 0...</p>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>Please don't close this page during processing. Results will be available for download when complete.
+                    </div>
+                </div>
+                
+                <div id="batch-results-section" class="d-none">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>Batch processing complete!
+                    </div>
+                    
+                    <div class="table-responsive mt-4">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Filename</th>
+                                    <th>Dominant Class</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="results-list">
+                                <!-- Results will be listed here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button type="button" class="btn btn-success btn-lg" id="download-all-btn">
+                            <i class="fas fa-download me-2"></i>Download All Results (ZIP)
+                        </button>
+                        <button type="button" class="btn btn-outline-primary ms-2" id="new-batch-btn">
+                            <i class="fas fa-plus me-2"></i>Process New Batch
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card mt-5">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Batch Processing Tips</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="mb-0">
+                            <li>For best results, ensure all images are of similar quality and resolution</li>
+                            <li>Processing time depends on the number and size of images</li>
+                            <li>The system will automatically resize large images to 320x320 pixels for processing</li>
+                            <li>Results will include classification maps, statistics, and overlay views for each image</li>
+                            <li>You can download individual results or all results as a single ZIP archive</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    .upload-zone {
+        border: 2px dashed #ccc;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        transition: all 0.3s;
+    }
+    
+    .upload-zone.highlight {
+        border-color: #0d6efd;
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+    
+    .custom-file-container {
+        position: relative;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM elements
+        const batchUploadZone = document.getElementById('batch-upload-zone');
+        const batchFileInput = document.getElementById('batch-file-input');
+        const batchBrowseBtn = document.getElementById('batch-browse-btn');
+        const selectedFilesContainer = document.getElementById('selected-files-container');
+        const selectedFilesList = document.getElementById('selected-files-list');
+        const fileCountSpan = document.getElementById('file-count');
+        const clearFilesBtn = document.getElementById('clear-files-btn');
+        const processBatchBtn = document.getElementById('process-batch-btn');
+        const batchUploadSection = document.getElementById('batch-upload-section');
+        const batchProgressSection = document.getElementById('batch-progress-section');
+        const batchResultsSection = document.getElementById('batch-results-section');
+        const batchProgressBar = document.getElementById('batch-progress-bar');
+        const batchProgressText = document.getElementById('batch-progress-text');
+        const resultsListTable = document.getElementById('results-list');
+        const downloadAllBtn = document.getElementById('download-all-btn');
+        const newBatchBtn = document.getElementById('new-batch-btn');
+        
+        // File list
+        let fileList = [];
+        
+        // Handle file selection via browse button
+        batchBrowseBtn.addEventListener('click', function() {
+            batchFileInput.click();
+        });
+        
+        // Handle drag and drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            batchUploadZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            batchUploadZone.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            batchUploadZone.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            batchUploadZone.classList.add('highlight');
+        }
+        
+        function unhighlight() {
+            batchUploadZone.classList.remove('highlight');
+        }
+        
+        // Handle file drop
+        batchUploadZone.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                handleFiles(files);
+            }
+        }
+        
+        // Handle file selection via input
+        batchFileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                handleFiles(this.files);
+            }
+        });
+        
+        // Handle files
+        function handleFiles(files) {
+            if (files.length > 10) {
+                alert('Maximum 10 files allowed per batch.');
+                return;
+            }
+            
+            fileList = Array.from(files);
+            updateFileList();
+        }
+        
+        // Update file list display
+        function updateFileList() {
+            selectedFilesList.innerHTML = '';
+            fileList.forEach((file, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${file.name}</td>
+                    <td>${formatFileSize(file.size)}</td>
+                    <td><span class="badge bg-secondary">Pending</span></td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-file" data-index="${index}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                `;
+                selectedFilesList.appendChild(row);
+            });
+            
+            fileCountSpan.textContent = fileList.length;
+            
+            if (fileList.length > 0) {
+                selectedFilesContainer.classList.remove('d-none');
+            } else {
+                selectedFilesContainer.classList.add('d-none');
+            }
+            
+            // Add event listeners for remove buttons
+            document.querySelectorAll('.remove-file').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    fileList.splice(index, 1);
+                    updateFileList();
+                });
+            });
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Clear all files
+        clearFilesBtn.addEventListener('click', function() {
+            fileList = [];
+            updateFileList();
+        });
+        
+        // Process batch
+        processBatchBtn.addEventListener('click', function() {
+            if (fileList.length === 0) {
+                alert('Please select at least one file to process.');
+                return;
+            }
+            
+            // Show progress section
+            batchUploadSection.classList.add('d-none');
+            batchProgressSection.classList.remove('d-none');
+            
+            // Simulate batch processing
+            simulateBatchProcessing();
+        });
+        
+        // Simulate batch processing
+        function simulateBatchProcessing() {
+            let processed = 0;
+            const total = fileList.length;
+            
+            // Update progress
+            function updateProgress() {
+                const progress = Math.round((processed / total) * 100);
+                batchProgressBar.style.width = `${progress}%`;
+                batchProgressText.textContent = `Processing image ${processed} of ${total}...`;
+            }
+            
+            // Process next file
+            function processNextFile() {
+                if (processed < total) {
+                    processed++;
+                    updateProgress();
+                    
+                    // Simulate processing time (1-3 seconds per file)
+                    const processingTime = 1000 + Math.random() * 2000;
+                    
+                    setTimeout(() => {
+                        processNextFile();
+                    }, processingTime);
+                } else {
+                    // All files processed
+                    showResults();
+                }
+            }
+            
+            // Start processing
+            updateProgress();
+            processNextFile();
+        }
+        
+        // Show results
+        function showResults() {
+            // Hide progress section
+            batchProgressSection.classList.add('d-none');
+            batchResultsSection.classList.remove('d-none');
+            
+            // Generate result list
+            resultsListTable.innerHTML = '';
+            
+            const landCoverClasses = ['Forest', 'Water', 'Urban', 'Agriculture', 'Grassland', 'Barren'];
+            
+            fileList.forEach(file => {
+                // Generate random dominant class for simulation
+                const randomClass = landCoverClasses[Math.floor(Math.random() * landCoverClasses.length)];
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${file.name}</td>
+                    <td>${randomClass}</td>
+                    <td><span class="badge bg-success">Complete</span></td>
+                    <td>
+                        <button type="button" class="btn btn-sm btn-outline-primary view-result">
+                            <i class="fas fa-eye me-1"></i>View
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-success ms-1 download-result">
+                            <i class="fas fa-download me-1"></i>Download
+                        </button>
+                    </td>
+                `;
+                resultsListTable.appendChild(row);
+            });
+            
+            // Add event listeners for result buttons
+            document.querySelectorAll('.view-result').forEach(button => {
+                button.addEventListener('click', function() {
+                    alert('This is a simulation. In a real application, this would show the classification results.');
+                });
+            });
+            
+            document.querySelectorAll('.download-result').forEach(button => {
+                button.addEventListener('click', function() {
+                    alert('This is a simulation. In a real application, this would download the result files.');
+                });
+            });
+        }
+        
+        // Download all results
+        downloadAllBtn.addEventListener('click', function() {
+            alert('This is a simulation. In a real application, this would download a ZIP file with all results.');
+        });
+        
+        // Process new batch
+        newBatchBtn.addEventListener('click', function() {
+            // Clear file list
+            fileList = [];
+            updateFileList();
+            
+            // Show upload section
+            batchResultsSection.classList.add('d-none');
+            batchUploadSection.classList.remove('d-none');
+        });
+    });
+</script>
+{% endblock %}

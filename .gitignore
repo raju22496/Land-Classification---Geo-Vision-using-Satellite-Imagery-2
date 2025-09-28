@@ -1,0 +1,91 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Environments
+venv/
+env/
+ENV/
+.venv/
+venv.bak/
+
+# Jupyter
+.ipynb_checkpoints/
+# (allow committing notebooks intentionally, but ignore checkpoint files)
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Secrets / env
+.env
+.env.*
+credentials.json
+
+# Python packaging
+pip-log.txt
+
+# Compiled files
+*.class
+*.dll
+*.exe
+*.o
+*.pyc
+
+# Model and large binary files
+model.pt
+*.pth
+*.h5
+*.ckpt
+*.tflite
+*.pb
+
+# Results, uploads, and user-generated data
+results/
+results/uploads/
+uploads/
+uploads/
+
+# If you have a data/ or datasets/ folder, ignore them by default (uncomment to use)
+# data/
+# datasets/
+
+# Keep static site source but ignore generated or uploaded media inside static if any
+static/uploads/
+
+# Git attributes from Git LFS (if used)
+.gitattributes
+
+# Optional: lock files & node modules (if you use node tools)
+node_modules/
+package-lock.json
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Mac
+.DS_Store
+
+# End of file

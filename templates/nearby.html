@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Find Nearby Points of Interest{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white py-3">
+                <h3 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Find Nearby Points of Interest</h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="alert alert-info d-flex align-items-center" role="alert">
+                            <i class="fas fa-info-circle me-3 fs-4"></i>
+                            <div>
+                                Enter a location to discover schools, hospitals, restaurants, shops, and other important amenities in the area.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="alert alert-danger d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-3 fs-4"></i>
+                    <ul class="mb-0">
+                        {% for message in messages %}
+                        <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                {% endwith %}
+                
+                <form action="{{ url_for('nearby') }}" method="post">
+                    <div class="mb-4">
+                        <label for="location" class="form-label fw-bold">Location:</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary text-white"><i class="fas fa-search-location"></i></span>
+                            <input type="text" class="form-control form-control-lg" id="location" name="location" 
+                                placeholder="Enter address, city, or coordinates (e.g., 'New York City' or '40.7128,-74.0060')" required>
+                        </div>
+                        <div class="form-text text-muted">Enter a specific address, city name, or latitude,longitude coordinates</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="radius" class="form-label fw-bold">Search Radius:</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary text-white"><i class="fas fa-expand-arrows-alt"></i></span>
+                            <select class="form-select" id="radius" name="radius">
+                                <option value="500">500 meters</option>
+                                <option value="1000" selected>1 kilometer</option>
+                                <option value="2000">2 kilometers</option>
+                                <option value="5000">5 kilometers</option>
+                                <option value="10000">10 kilometers</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-search me-2"></i>Search for Points of Interest
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer bg-light">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center">
+                            <div class="feature-icon bg-primary text-white rounded-circle p-2 me-2">
+                                <i class="fas fa-school"></i>
+                            </div>
+                            <span>Schools</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center">
+                            <div class="feature-icon bg-danger text-white rounded-circle p-2 me-2">
+                                <i class="fas fa-hospital"></i>
+                            </div>
+                            <span>Hospitals</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center">
+                            <div class="feature-icon bg-success text-white rounded-circle p-2 me-2">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <span>Restaurants</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-center">
+            <a href="{{ url_for('documentation') }}" class="text-decoration-none">
+                <i class="fas fa-code me-1"></i> API Documentation for Developers
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
